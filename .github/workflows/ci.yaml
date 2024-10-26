@@ -44,6 +44,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose        
+
       - name: Build and Run Docker Compose
         run: |
           docker-compose up -d
@@ -63,7 +68,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          # Here you can add commands to run your application tests if needed
+          # TODO: implement running tests...
           echo "Running tests..."
           # Example: docker-compose exec book-service ./run-tests.sh
 
