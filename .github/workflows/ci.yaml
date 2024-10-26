@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: mydatabase
+          POSTGRES_USER: myuser
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U myuser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and Run Docker Compose
+        run: |
+          docker-compose up -d
+          docker-compose ps
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          until docker-compose exec postgres pg_isready -U myuser; do
+            sleep 1
+          done
+
+          echo "Waiting for Redis to be ready..."
+          until docker-compose exec redis redis-cli ping; do
+            sleep 1
+          done
+
+      - name: Run Tests
+        run: |
+          # Here you can add commands to run your application tests if needed
+          echo "Running tests..."
+          # Example: docker-compose exec book-service ./run-tests.sh
+
+      - name: Shut Down Docker Compose
+        if: always()
+        run: docker-compose down
