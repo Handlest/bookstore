@@ -18,7 +18,11 @@ import java.util.List;
 @Builder
 @Table(name = "shelf_tiers")
 public class ShelfTierEntity {
-    @EmbeddedId
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shelf_tier_id")
+    private Long id;
+
     private ShelfTierBookPosition shelfTier;
 
     @ManyToOne
@@ -36,7 +40,7 @@ public class ShelfTierEntity {
     private List<BookEntity> books = new ArrayList<>();
 
     @Column(name = "current_capacity", nullable = false)
-    private int currentCapacity = books.size();
+    private int currentCapacity = books == null ? 0 : books.size();
 
     @PostUpdate
     @PrePersist

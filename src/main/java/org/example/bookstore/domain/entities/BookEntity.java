@@ -75,8 +75,8 @@ public class BookEntity {
     List<String> tags = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "shelf_tier", nullable = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "shelf_tier_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private ShelfTierEntity shelfTier;
 
     @Lob // represents as BLOB

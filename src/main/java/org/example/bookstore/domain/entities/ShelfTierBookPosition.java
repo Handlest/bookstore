@@ -14,5 +14,5 @@ import java.io.Serializable;
 @Builder
 public class ShelfTierBookPosition implements Serializable {
     private int tier;
-    private int shelf;
+    private int shelfNumber;
 }
